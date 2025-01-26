@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import About from "./Components/About";
 import Contact from "./Components/Contact";
@@ -11,44 +11,63 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const API_KEY = "38171229de3ee3a438b9c4036781e4ca"; 
+  const API_KEY = "38171229de3ee3a438b9c4036781e4ca";
   const BASE_URL = "https://api.themoviedb.org/3";
 
-  // Fetch movies from the API
-  const fetchMovies = async (page = 1) => {
+  
+  const fetchMovies = useCallback(async (page = 1) => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/search/movie`,
-        {
-          params: {
-            api_key: API_KEY,
-            query: searchTerm || "a", // Default query to avoid empty search
-            page,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/search/movie`, {
+        params: {
+          api_key: API_KEY,
+          query: searchTerm || "a", 
+          page,
+          include_adult: false, 
+        },
+      });
+
+     
+      const maxPages = 10; 
       setMovies(response.data.results);
-      setTotalPages(response.data.total_pages);
+      setTotalPages(Math.min(response.data.total_pages, maxPages));
     } catch (error) {
       console.error("Error fetching movies:", error);
     }
-  };
+  }, [searchTerm]); 
 
-  // Handle search input
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Search when term or page changes
+
   useEffect(() => {
     fetchMovies(currentPage);
-  }, [searchTerm, currentPage]);
+  }, [fetchMovies, currentPage]);
 
-  // Handle page change
+
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const getVisiblePages = () => {
+    const totalPageNumbersToShow = 5;
+    const halfRange = Math.floor(totalPageNumbersToShow / 2);
+
+    let startPage = Math.max(1, currentPage - halfRange);
+    let endPage = Math.min(totalPages, currentPage + halfRange);
+
+ 
+    if (currentPage <= halfRange) {
+      endPage = Math.min(totalPages, totalPageNumbersToShow);
+    } else if (currentPage + halfRange > totalPages) {
+      startPage = Math.max(1, totalPages - totalPageNumbersToShow + 1);
+    }
+
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   };
 
   return (
@@ -66,8 +85,8 @@ const App = () => {
 
         {/* Main Content */}
         <Routes>
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
               <>
                 <div className="search-box">
@@ -94,20 +113,30 @@ const App = () => {
                   ))}
                 </div>
                 <div className="pagination">
-                  {Array.from({ length: totalPages }, (_, index) => (
+                  {/* Previous Button */}
+                  {currentPage > 1 && (
+                    <span onClick={() => handlePageChange(currentPage - 1)}>Previous</span>
+                  )}
+                  
+                  {/* Page Numbers */}
+                  {getVisiblePages().map((page) => (
                     <span
-                      key={index}
-                      className={currentPage === index + 1 ? "active" : ""}
-                      onClick={() => handlePageChange(index + 1)}
+                      key={page}
+                      className={currentPage === page ? "active" : ""}
+                      onClick={() => handlePageChange(page)}
                     >
-                      {index + 1}
+                      {page}
                     </span>
                   ))}
+
+                  {/* Next Button */}
+                  {currentPage < totalPages && (
+                    <span onClick={() => handlePageChange(currentPage + 1)}>Next</span>
+                  )}
                 </div>
               </>
-            } 
+            }
           />
-          <Route path="/" element={<App />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
