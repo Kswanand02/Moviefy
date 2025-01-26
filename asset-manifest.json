@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Moviefy/static/css/main.34a0ed0d.css",
-    "main.js": "/Moviefy/static/js/main.80ac01c4.js",
+    "main.css": "/Moviefy/static/css/main.f6c3584d.css",
+    "main.js": "/Moviefy/static/js/main.7447c651.js",
     "static/js/156.99a23641.chunk.js": "/Moviefy/static/js/156.99a23641.chunk.js",
     "index.html": "/Moviefy/index.html",
-    "main.34a0ed0d.css.map": "/Moviefy/static/css/main.34a0ed0d.css.map",
-    "main.80ac01c4.js.map": "/Moviefy/static/js/main.80ac01c4.js.map",
+    "main.f6c3584d.css.map": "/Moviefy/static/css/main.f6c3584d.css.map",
+    "main.7447c651.js.map": "/Moviefy/static/js/main.7447c651.js.map",
     "156.99a23641.chunk.js.map": "/Moviefy/static/js/156.99a23641.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.34a0ed0d.css",
-    "static/js/main.80ac01c4.js"
+    "static/css/main.f6c3584d.css",
+    "static/js/main.7447c651.js"
   ]
 }
